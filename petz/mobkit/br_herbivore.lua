@@ -167,13 +167,13 @@ function petz.herbivore_brain(self)
 				elseif distance <= 3.0 then
 					if petz.settings.tamagochi_mode and not(self.fed) then
 						petz.do_feed(self)
-						if self.eat_hay then
-							local node = minetest.get_node_or_nil(tpos)
-							if node and node.name == "bale:bale" then
-								minetest.remove_node(tpos)
-								mokapi.make_sound("pos", tpos, "petz_replace", 5 or mokapi.consts.DEFAULT_MAX_HEAR_DISTANCE)
-							end
-						end
+						--if self.eat_hay then
+							--local node = minetest.get_node_or_nil(tpos)
+							--if node and node.name == "bale:bale" then
+								--minetest.remove_node(tpos)
+								--mokapi.make_sound("pos", tpos, "petz_replace", 5 or mokapi.consts.DEFAULT_MAX_HEAR_DISTANCE)
+							--end
+						--end
 					end
 				end
 			end
