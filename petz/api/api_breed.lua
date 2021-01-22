@@ -81,48 +81,53 @@ petz.childbirth = function(self)
 	end
 	local baby_type = "petz:"..self.type
 	if self.type == "elephant" then -- female elephants have "elephant" as type
-		if math.random(1, 2) == 1 then
+		if math.random(1,2) == 1 then
 			baby_type = "petz:elephant_female" --could be a female baby elephant
 		end
-	end
-	pos.y = pos.y + 1.01 -- birth a litte up
+	end	
+	pos.y = pos.y + 1.01 -- birth a litte up		
 	local baby = minetest.add_entity(pos, baby_type, minetest.serialize(baby_properties))
-	mokapi.make_sound("object", baby, "petz_pop_sound", petz.settings.max_hear_distance)
+    mokapi.make_sound("object", baby, "petz_pop_sound", petz.settings.max_hear_distance)
 	local baby_entity = baby:get_luaentity()
 	baby_entity.is_baby = true
 	mobkit.remember(baby_entity, "is_baby", baby_entity.is_baby)
-	if not(self.owner== nil) and not(self.owner== "") then
+	if not(self.owner== nil) and not(self.owner== "") then					
 		baby_entity.tamed = true
 		mobkit.remember(baby_entity, "tamed", baby_entity.tamed)
 		baby_entity.owner = self.owner
 		mobkit.remember(baby_entity, "owner", baby_entity.owner)
-	end
+	end	
 	return baby_entity
 end
 
 petz.pregnant_timer = function(self, dtime)
-	self.pregnant_time = mobkit.remember(self, "pregnant_time", self.pregnant_time + dtime)
+	-- set pregnant time if it hasn't been set already
+	if(not(self.pregnant_time)) then
+		self.pregnant_time = 0
+	end
+	self.pregnant_time = mobkit.remember(self, "pregnant_time", self.pregnant_time + dtime) 
 	if self.pregnant_time >= petz.settings.pregnancy_time then
 		local baby_entity = petz.childbirth(self)
-		if self.is_mountable then
+		if self.is_mountable == true then		
 			--Set the genetics accordingly the father and the mother
-			local speedup = (self.horseshoes or 0) * petz.settings.horseshoe_speedup
-			local random_number = math.random(-1, 1)
-			local new_max_speed_forward = petz.round(((self.father_veloc_stats["max_speed_forward"] or 1) + (self.max_speed_forward-speedup))/2) + random_number
+			local random_number = math.random(-2, 2)
+            local random_number2 = math.random(-1, 1)
+            local random_number3 = math.random(-2, 2)
+			local new_max_speed_forward = petz.round(self.max_speed_forward + random_number2 or 1)
 			if new_max_speed_forward <= 0 then
 				new_max_speed_forward = 0
 			elseif new_max_speed_forward > 10 then
 				new_max_speed_forward = 10
 			end
 			random_number = math.random(-1, 1)
-			local new_max_speed_reverse = petz.round(((self.father_veloc_stats["max_speed_reverse"] or 1) + (self.max_speed_reverse-speedup))/2) + random_number
+			local new_max_speed_reverse = petz.round(self.max_speed_reverse + random_number3 or 1)
 			if new_max_speed_reverse <= 0 then
 				new_max_speed_reverse = 0
 			elseif new_max_speed_reverse > 10 then
 				new_max_speed_reverse = 10
 			end
 			random_number = math.random(-1, 1)
-			local new_accel  = petz.round(((self.father_veloc_stats["accel"] or 1) + (self.accel-speedup))/2) + random_number
+			local new_accel = petz.round(self.accel + random_number or 1)
 			if new_accel <= 0 then
 				new_accel = 0
 			elseif new_accel > 10 then
